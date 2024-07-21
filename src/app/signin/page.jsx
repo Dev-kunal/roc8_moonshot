@@ -2,14 +2,12 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { toast } from "sonner";
 
 export default function Signin(props) {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [userMessage, setUserMessage] = useState({
-    success: false,
-    message: "",
-  });
+
   const [userData, setUserData] = useState({
     email: "",
     password: "",
@@ -18,11 +16,10 @@ export default function Signin(props) {
   const login = async () => {
     try {
       const res = await axios.post("/api/auth/signin", { ...userData });
-      console.log({ res: res.data });
       if (res.data.success) {
-        setUserMessage({ success: true, message: res.data.message });
+        toast.success(res.data.message, { duration: 800 });
         router.push("/");
-      } else setUserMessage({ success: false, message: res.data.message });
+      } else toast.error(res.data.message, { duration: 800 });
     } catch (error) {
       console.error(error);
     }
@@ -94,17 +91,6 @@ export default function Signin(props) {
               </div>
             </div>
             <div className="mt-8">
-              <div className="p-1">
-                {userMessage && userMessage.message && (
-                  <span
-                    className={`text-xs ${
-                      userMessage.success ? "text-green-400" : "text-red-500"
-                    }`}
-                  >
-                    {userMessage.message}
-                  </span>
-                )}
-              </div>
               <button
                 onClick={() => login()}
                 type="button"

@@ -8,6 +8,7 @@ export function generateOTP() {
 }
 
 export function getMaskedEmail(email) {
+  if (!email) return "";
   const [username, domain] = email.split("@");
   const hiddenUsername =
     username.substring(0, Math.min(3, username.length)) +

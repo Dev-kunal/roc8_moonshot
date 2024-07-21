@@ -19,7 +19,7 @@ export async function GET(req) {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return NextResponse.json({
       message: "Something went wrong!",
       success: false,
@@ -33,15 +33,9 @@ export async function POST(req) {
     const session = verifyUserToken(await req.cookies.get("token")?.value);
     if (!session)
       return NextResponse.json({ message: "Invaild Token, pls login again" });
-    console.log({ updates });
     const uniqUpdates = uniqBy(updates, "categoryId");
     const userCatergoriesToAdd = uniqUpdates.filter((u) => u.isSelected);
     const userCatergoriesToDelete = uniqUpdates.filter((u) => !u.isSelected);
-    console.log({
-      userCatergoriesToDelete,
-      userCatergoriesToAdd,
-      delet: userCatergoriesToDelete.map((c) => c.categoryId),
-    });
 
     await client.$transaction(async (tx) => {
       if (userCatergoriesToAdd.length > 0)
@@ -68,14 +62,12 @@ export async function POST(req) {
         });
     });
 
-    console.log("trasaction complete--->");
-
     return NextResponse.json({
-      userCategories: {},
+      message: "updated preferences",
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return NextResponse.json({
       message: "Something went wrong!",
       success: false,

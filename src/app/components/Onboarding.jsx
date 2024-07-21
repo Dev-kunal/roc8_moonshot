@@ -6,6 +6,7 @@ import axios from "axios";
 import { getPageRange } from "../utils";
 import useDebounce from "../customHooks/UseDebounce";
 import uniqBy from "lodash.uniqby";
+import { toast } from "sonner";
 
 const INITIAL_PAGES = [1, 2, 3, 4, 5, 6, 7];
 
@@ -13,6 +14,7 @@ export default function Onboarding(props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [categories, setCategories] = useState([]);
   const [userSelectedCategories, setUserSelectedCategories] = useState([]);
+  const [userSelecionChanged, setUserSelecionChanged] = useState(false);
   const [userSelectedCategoriesMap, setUserSelectedCategoriesMap] = useState(
     () =>
       userSelectedCategories?.reduce(function (map, obj) {
@@ -36,12 +38,12 @@ export default function Onboarding(props) {
     async function fethcUserCategories() {
       const res = await axios.get(`/api/categories/usercategories`);
       const { success, userCategories } = res.data;
-      console.log({ new: userCategories });
       if (success)
         setUserSelectedCategories(
           userCategories.map((c) => ({ ...c, isSelected: true }))
         );
     }
+
     fethcUserCategories();
   }, []);
 
@@ -49,11 +51,13 @@ export default function Onboarding(props) {
     // update the userCategories
     async function updateUserCategories() {
       const uniqUpdates = uniqBy(debouncedCategoryChange, "categoryId");
-      if (uniqUpdates.length > 0) {
-        console.log("calling debounce update-->", uniqUpdates);
+      if (uniqUpdates.length > 0 && userSelecionChanged) {
         const res = await axios.post(`/api/categories/usercategories`, {
           updates: uniqUpdates,
         });
+        setUserSelecionChanged(false);
+        if (res.data.success)
+          toast.success(res.data.message, { duration: 800 });
       }
     }
     updateUserCategories();
@@ -74,7 +78,7 @@ export default function Onboarding(props) {
   }, [currentPage]);
 
   const handleCategorySelection = (id, isChecked) => {
-    console.log({ id, isChecked, userSelectedCategories });
+    setUserSelecionChanged(true);
     setUserSelectedCategories((oldState) => {
       let isCategoryAlreadyExist = oldState.find((c) => c.categoryId === id);
       if (isChecked) {

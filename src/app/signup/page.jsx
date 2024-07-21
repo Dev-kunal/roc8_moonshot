@@ -3,8 +3,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Verify from "../components/Verify";
 import SignupForm from "../components/SignupForm";
+import { toast } from "sonner";
 
 export default function Signup(props) {
   const [userData, setUserData] = useState({
@@ -12,16 +12,15 @@ export default function Signup(props) {
     email: "",
     password: "",
   });
-  const [showVerify, setShowVerify] = useState(false);
+  const router = useRouter();
 
   const submitUserData = async () => {
     try {
       const res = await axios.post("/api/auth/signup", { ...userData });
-      console.log({ res: res.data });
       if (res.data.success) {
-        setShowVerify(true);
-      }
-      // router.push(`/verification?email=${userEmail}`)
+        toast.success(res.data.message);
+        router.push(`/verify?email=${userData.email}`);
+      } else toast.error(res.data.message, { duration: 800 });
     } catch (error) {
       console.error(error);
     }
@@ -29,15 +28,11 @@ export default function Signup(props) {
 
   return (
     <>
-      {showVerify ? (
-        <Verify userEmail={userData.email} />
-      ) : (
-        <SignupForm
-          userData={userData}
-          setUserData={setUserData}
-          submitUserData={submitUserData}
-        />
-      )}
+      <SignupForm
+        userData={userData}
+        setUserData={setUserData}
+        submitUserData={submitUserData}
+      />
     </>
   );
 }

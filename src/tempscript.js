@@ -115,26 +115,3 @@ async function inserCategories() {
 }
 
 // inserCategories();
-
-const categrories = [
-  {
-    id: 14,
-    userId: 1,
-    categoryId: 2,
-    isSelected: true,
-  },
-  {
-    id: 15,
-    userId: 1,
-    categoryId: 3,
-    isSelected: true,
-  },
-];
-
-let id = 6,
-  isSelected = true;
-const newAR = categrories.map((ca) =>
-  ca.categoryId === id ? { categoryId: id, isSelected: isSelected } : ca
-);
-
-console.log({ newAR });

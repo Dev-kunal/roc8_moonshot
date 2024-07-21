@@ -1,12 +1,24 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import OTPInput from "react-otp-input";
 import { getMaskedEmail } from "../utils";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
-export default function Verify({ userEmail }) {
+function MaskedUserEmail({ setUserEmail }) {
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+  setUserEmail(email);
+
+  return <Suspense>{getMaskedEmail(email)}</Suspense>;
+}
+
+export default function Verify() {
   const [code, setCode] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+
   const handleCodeChange = (code) => setCode(code);
   const router = useRouter();
 
@@ -16,7 +28,10 @@ export default function Verify({ userEmail }) {
         userEmail,
         code,
       });
-      if (res.data.success) router.push("/signin");
+      if (res.data.success) {
+        toast.success(res.data.message, { duration: 800 });
+        router.push("/signin");
+      } else toast.error(res.data.message, { duration: 800 });
     } catch (error) {
       console.error(error);
     }
@@ -32,7 +47,11 @@ export default function Verify({ userEmail }) {
 
           <h3 className="text-sm mb-4 text-center font-light">
             Enter the 8 digit code you have received on{" "}
-            <span className="font-normal">{getMaskedEmail(userEmail)}</span>
+            <span className="font-normal">
+              <Suspense>
+                <MaskedUserEmail setUserEmail={setUserEmail} />
+              </Suspense>
+            </span>
           </h3>
 
           <form className="max-w-lg mx-auto">
