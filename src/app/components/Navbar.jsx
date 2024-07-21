@@ -5,6 +5,9 @@ export default function Navbar(props) {
     <>
       <div className="flex justify-end p-1">
         <ul className="flex gap-3 text-sm font-light">
+          <li>
+            <a href="/signin">Login</a>
+          </li>
           <li>Help</li>
           <li>Order & Returns</li>
           <li>Hi John</li>
