@@ -116,7 +116,7 @@ export default function Signin(props) {
 
             <div className="mt-8 text-center">
               <span className="text-xs text-gray-700">
-                Don't have an Account?
+                Don`&apos;t have an Account? Dont have an Account?
               </span>
               <a href="/signup">
                 <span className="tracking-wider text-sm ml-2">SIGN UP</span>{" "}

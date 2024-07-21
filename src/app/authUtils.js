@@ -10,7 +10,3 @@ export function verifyUserToken(token) {
     return null;
   }
 }
-
-export function getUserFromCookies(token) {
-  return jwt.decode(token);
-}

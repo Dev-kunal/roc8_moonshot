@@ -1,10 +1,11 @@
 import { verifyUserToken } from "@/app/authUtils";
 import { NextResponse } from "next/server";
 import client from "@/app/db";
+export const dynamic = "force-dynamic";
 
 export async function GET(req) {
   try {
-    const session = verifyUserToken(req.cookies.get("token")?.value);
+    const session = verifyUserToken(await req.cookies.get("token")?.value);
     if (!session)
       return NextResponse.json({ message: "Invaild Token, pls login again" });
 
