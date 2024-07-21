@@ -33,7 +33,6 @@ export async function POST(req) {
         email,
         password: hash,
         verificationOTP: otp,
-        // userCategories: [],
       },
     });
 

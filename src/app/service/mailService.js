@@ -6,6 +6,9 @@ export async function sendMail(
 ) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
+    tls: {
+      ciphers: "SSLv3",
+    },
     auth: {
       user: process.env.NODEMAILER_EMAIL,
       pass: process.env.NODEMAILER_PW,
@@ -20,12 +23,14 @@ export async function sendMail(
     html: `<p>Here'e your email verification code <b>${otp}</b></p>`,
   };
 
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      throw new Error(error);
-    } else {
-      console.log("Email Sent");
-      return true;
-    }
+  await new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        throw new Error(error);
+      } else {
+        console.log("Email Sent");
+        resolve(true);
+      }
+    });
   });
 }
