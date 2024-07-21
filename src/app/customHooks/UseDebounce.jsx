@@ -8,7 +8,7 @@ export default function useDebounce(changeStream, delay) {
     return () => {
       clearTimeout(timeoutRef);
     };
-  }, [changeStream]);
+  }, [changeStream, delay]);
 
   return debouncedValue;
 }
